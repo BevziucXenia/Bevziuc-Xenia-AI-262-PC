@@ -1,0 +1,80 @@
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <cstdlib> // Для system("pause")
+
+using namespace std;
+
+int main() {
+    double a, b, c;
+    double x_start, x_end, dx;
+
+    cout << "Enter a, b, c: ";
+    cin >> a >> b >> c;
+
+    cout << "Enter Xstart, Xend, dX: ";
+    cin >> x_start >> x_end >> dx;
+
+    // Проверка правильности шага
+    if (dx == 0 || (x_start < x_end && dx < 0) || (x_start > x_end && dx > 0)) {
+        cout << "Error: incorrect step dX!" << endl;
+        system("pause");
+        return 1;
+    }
+
+    // Битовая проверка параметров
+    int Ac = static_cast<int>(a);
+    int Bc = static_cast<int>(b);
+    int Cc = static_cast<int>(c);
+    bool isReal = ((Ac ^ Bc) & ~(Ac | Cc)) != 0;
+
+    cout << endl << "-----------------------------------------" << endl;
+    cout << setw(10) << "X" << setw(15) << "F" << endl;
+    cout << "-----------------------------------------" << endl;
+
+    for (double x = x_start; (dx > 0 ? x <= x_end + 1e-9 : x >= x_end - 1e-9); x += dx) {
+        if (x < 0 && b != 0) {
+            // Ветка 1: x < 0 и b != 0
+            if (10.0 + b == 0) {
+                cout << setw(10) << fixed << setprecision(3) << x << setw(15) << "Undefined" << endl;
+            } else {
+                double f = a - cos(x) / (10.0 + b);
+                cout << setw(10) << fixed << setprecision(3) << x;
+                if (isReal) {
+                    cout << setw(15) << setprecision(3) << f << endl;
+                } else {
+                    cout << setw(15) << static_cast<long long>(f) << endl;
+                }
+            }
+        } 
+        else if (x > 0 && b == 0) {
+            // Ветка 2: x > 0 и b == 0
+            // Деление на (x - b) при b = 0 дает (x - 0) = x, деления на 0 при x > 0 быть не может
+            double f = (x - a) / x; 
+            cout << setw(10) << fixed << setprecision(3) << x;
+            if (isReal) {
+                cout << setw(15) << setprecision(3) << f << endl;
+            } else {
+                cout << setw(15) << static_cast<long long>(f) << endl;
+            }
+        } 
+        else {
+            // Ветка 3: во всех остальных случаях
+            if (c == 0) {
+                cout << setw(10) << fixed << setprecision(3) << x << setw(15) << "Undefined" << endl;
+            } else {
+                double f = 3 * x * x + a / c;
+                cout << setw(10) << fixed << setprecision(3) << x;
+                if (isReal) {
+                    cout << setw(15) << setprecision(3) << f << endl;
+                } else {
+                    cout << setw(15) << static_cast<long long>(f) << endl;
+                }
+            }
+        }
+    }
+
+    cout << "-----------------------------------------" << endl;
+    system("pause"); // Задерживает консольное окно
+    return 0;
+}
